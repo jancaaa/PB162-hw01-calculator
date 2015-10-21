@@ -29,13 +29,13 @@ To succesfully implement this assignemnt you need to know the following
 ### Project structure
 The structure of project provided as a base for your implementation should meet the following criteria.
 
-1. Package ```cz.muni.fi.pb162.hw01``` contains classes and interfaces provided as part of the assignment.
+1. Package ```cz.muni.fi.pb162.calculator``` contains classes and interfaces provided as part of the assignment.
   - **Do not modify or add any classes or subpackages into this package.**
-2. Package  ```cz.muni.fi.pb162.hw0.impl``` should contain your implementation.
+2. Package  ```cz.muni.fi.pb162.calculator.impl``` should contain your implementation.
   - **Anything outside this package will be ignored during evaluation.**
 
 ### Names in this document
-Unless fully classified name is provided, all class names are relative to  package ```cz.muni.fi.pb162.hw01``` or ```cz.muni.fi.pb162.hw0.impl``` for classes impelemnted as part of your solution.
+Unless fully classified name is provided, all class names are relative to  package ```cz.muni.fi.pb162.calculator``` or ```cz.muni.fi.pb162.calculator.impl``` for classes impelemnted as part of your solution.
 
 ### Compiling the project
 The project can be compiled and packaged in the same way you already know 
@@ -59,7 +59,7 @@ The procedure to submit your solution may differ based on your seminar group. Ho
 
 Step 1: Implement Result interface
 ---------------------------
-Create an implementation of ```cz.muni.fi.pb162.hw01.Result``` named ```CalculationResult```. This class represents a result of operation performed on our calculator and can hold two different values:
+Create an implementation of ```cz.muni.fi.pb162.calculator.Result``` named ```CalculationResult```. This class represents a result of operation performed on our calculator and can hold two different values:
 
 1. Numeric (double) value
 2. Alphanumeric (String) value
@@ -69,7 +69,7 @@ Beside this the class also contains information whether performed operation was 
 
 Step 2: Implement Calculator interface
 ------------------------------
-Create an implementation of ```cz.muni.fi.pb162.hw01.Calculator``` named ```BasicCalculator```. This class represents a basic calculator capable of these operations:
+Create an implementation of ```cz.muni.fi.pb162.calculator.Calculator``` named ```BasicCalculator```. This class represents a basic calculator capable of these operations:
 
 1. Sum of two numbers
 2. Multiplication
@@ -80,7 +80,7 @@ Create an implementation of ```cz.muni.fi.pb162.hw01.Calculator``` named ```Basi
 The function and implementation of these should be quite straightforward based on related javadoc.
 
 ### Evaluate operations from textual input
-Interface ```cz.muni.fi.pb162.hw01.Calculator``` defines a method which allows the evaluation of mentioned operations in somewhat more natural (textual) form.
+Interface ```cz.muni.fi.pb162.calculator.Calculator``` defines a method which allows the evaluation of mentioned operations in somewhat more natural (textual) form.
 
 ```java
  /**
@@ -98,10 +98,10 @@ calc.eval("+ 1 2") // returns result containing 3
 calc.eval("/ 1 2") // returns result containing 2
 calc.eval("! 4")  // returns result containing 24
 ```
-Intefaces ```cz.muni.fi.pb162.hw01.Calculator``` defines constans for each required operator.
+Intefaces ```cz.muni.fi.pb162.calculator.Calculator``` defines constans for each required operator.
 
 ### Error handling
-Errors may happen, not every operation will work with arbitrary value of its operands. If the operation fails (e.g. somebody attemts to divide by zero) then the operation is expected to return a ```Result``` instance with appropriate error message. Error messages are also defined as constants in ```cz.muni.fi.pb162.hw01.Calculator```:
+Errors may happen, not every operation will work with arbitrary value of its operands. If the operation fails (e.g. somebody attemts to divide by zero) then the operation is expected to return a ```Result``` instance with appropriate error message. Error messages are also defined as constants in ```cz.muni.fi.pb162.calculator.Calculator```:
 
 1. ```COMPUTATION_ERROR_MSG```
   - Should be used for operation errors.
@@ -113,11 +113,11 @@ Errors may happen, not every operation will work with arbitrary value of its ope
 
 Step 3: Create ConvertingCalculator interface
 -------------------------------------
-Create new interface named ```ConvertingCalculator``` which will combine the API of both ```cz.muni.fi.pb162.hw01.Calculator``` and ```cz.muni.fi.pb162.hw01.NumeralConverter```.
+Create new interface named ```ConvertingCalculator``` which will combine the API of both ```cz.muni.fi.pb162.calculator.Calculator``` and ```cz.muni.fi.pb162.calculator.NumeralConverter```.
 
 Step 4: Implement ConvertingCalculator interface
 ----------------------------------------
-Create an implementation of ```cz.muni.fi.pb162.hw01.impl.ConvertingCalculator``` named ```AdvancedCalculator```. This class represents a calculator with the same operations as ```BasicCalculator```. You are required to avoid unnecessary code duplicities.
+Create an implementation of ```cz.muni.fi.pb162.calculator.impl.ConvertingCalculator``` named ```AdvancedCalculator```. This class represents a calculator with the same operations as ```BasicCalculator```. You are required to avoid unnecessary code duplicities.
 
 
 ### Numeral system conversions
@@ -146,9 +146,9 @@ The purpose of these methods should be clean from their javadoc, there is few ot
 2. You are required to implement these algorithms yourself.
   - This means that the use of any part of java language or library which allows the conversion is not allowed.
 
-Interface ```cz.muni.fi.pb162.hw01.NumeralConverter``` defines constant ```DIGITS``` which is a string of all digit characters used by numeral systems with bases up to 16. Even though you are not required to use this constant, you might find it useful.
+Interface ```cz.muni.fi.pb162.calculator.NumeralConverter``` defines constant ```DIGITS``` which is a string of all digit characters used by numeral systems with bases up to 16. Even though you are not required to use this constant, you might find it useful.
 
 ### Evaluate operations from textual input
 Also  ```AdvancedCalulator``` should allow the evaluation of operations by calling the ```eval(String input);``` method. However do not forget that this class defines few methods which are not present in ```BasicCalculator```. Once again, you should try to avoid code repetition.
 
-Operator constants for these can be found in ```cz.muni.fi.pb162.hw01.NumeralConverter```.
+Operator constants for these can be found in ```cz.muni.fi.pb162.calculator.NumeralConverter```.

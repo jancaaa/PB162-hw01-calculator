@@ -19,7 +19,7 @@ public interface Result {
 
     /**
      * Method used to determine whether result contains numeric value
-     * @return true if this result has alphanumeric value
+     * @return true if this result has numeric value
      */
     boolean isNumeric();
 
