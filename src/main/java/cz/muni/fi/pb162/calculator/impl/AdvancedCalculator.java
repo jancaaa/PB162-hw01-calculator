@@ -9,7 +9,7 @@ import cz.muni.fi.pb162.calculator.Result;
 
 /*
 TODO: Konverze návratových typù double, String -> Result
-TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4)
+TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4) - OK?
 TODO: Úprava popisu private metod
 TODO: Task "Evaluate operations from textual input"
 TODO: Zkontrolovat napojení metod z NumeralCoventer
@@ -17,9 +17,40 @@ TODO: Má být class abstract?
 TODO: Rozšíøit eval z Basic o pøevody z/do
 */
 
-public abstract class AdvancedCalculator implements ConvertingCalculator
-        //extends BasicCalculator
-{
+public abstract class AdvancedCalculator extends BasicCalculator implements ConvertingCalculator {
+    /**
+     * Evaluate textual input and perform computation
+     *
+     * @param input input string
+     * @return result
+     */
+    @Override
+    public Result eval(String input) {
+        String[] tokens = input.split(" ");
+        String operator = tokens[0];
+        double firstArgument;
+        double secondArgument;
+
+        if (operator.equals(TO_DEC_CMD) || operator.equals(FROM_DEC_CMD)) {
+            if (tokens.length < 3)
+                return WRONG_ARGUMENTS_ERROR_MSG;
+
+            firstArgument = Double.parseDouble(tokens[1]);
+            secondArgument = Double.parseDouble(tokens[2]);
+            if (firstArgument < 2 || firstArgument > 16)
+                return COMPUTATION_ERROR_MSG;
+
+            if (operator.equals(TO_DEC_CMD)){
+                return toDec(firstArgument,secondArgument);
+            }
+            if (operator.equals(FROM_DEC_CMD)){
+                return fromDec(firstArgument,secondArgument);
+            }
+        } else {
+            //volat eval z BasicCalculator
+        }
+    }
+
     /**
      * Convert a number in arbitrary numeral system (up to base 16) to decimal
      *

@@ -10,7 +10,8 @@ import cz.muni.fi.pb162.calculator.Result;
 
 /*
 TODO: Konverze návratových typù double, String -> Result
-TODO: Ošetøit, že byly zadány oba argumenty
+DONE: Ošetøit, že byly zadány oba argumenty
+DONE: Co dìlat, když faktoriál dostane dva argumenty (druhý ignorovat nebo hlásit chybu) => hlásí chybu
 */
 
 public class BasicCalculator implements Calculator {
@@ -23,44 +24,48 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result eval(String input) {
-        String operator;
+        String[] tokens = input.split(" ");
+        String operator = tokens[0];
         double firstArgument;
         double secondArgument;
 
-        String[] tokens = input.split(" ");
-        operator = tokens[0];
-        firstArgument = Double.parseDouble(tokens[1]);
-        if (!operator.equals(FAC_CMD))
-            secondArgument = Double.parseDouble(tokens[2]); //pouze pokud argument existuje (resp. operace ho pozaduje
+        if (tokens.length > 1)
+            firstArgument = Double.parseDouble(tokens[1]);
+        if (tokens.length > 2)
+            secondArgument = Double.parseDouble(tokens[2]);
 
-        switch (operator) {
-            case FAC_CMD: {
-                if (((firstArgument == Math.floor(firstArgument)) && !Double.isInfinite(firstArgument)) && (firstArgument >= 0))
-                    return fac((int) firstArgument);
-                else
-                    return WRONG_ARGUMENTS_ERROR_MSG;
+        if (operator.equals(FAC_CMD)) {
+            if ((tokens.length == 2) && (firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument)) && (firstArgument >= 0))
+                return fac((int) firstArgument); //zadany argument je cislo typu int a je nezáporné
+            else
+                return WRONG_ARGUMENTS_ERROR_MSG;
 
+        } else if (tokens.length == 3) {
+            switch (operator) {
+                case SUM_CMD: {
+                    return sum(firstArgument, secondArgument);
+                }
+                case SUB_CMD: {
+                    return sub(firstArgument, secondArgument);
+                }
+                case MUL_CMD: {
+                    return mul(firstArgument, secondArgument);
+                }
+                case DIV_CMD: {
+                    if (secondArgument == 0)
+                        return WRONG_ARGUMENTS_ERROR_MSG;
+                    else
+                        return div(firstArgument, secondArgument);
+                }
+                default:
+                    return UNKNOWN_OPERATION_ERROR_MSG;
             }
-            case SUM_CMD: {
-                return sum(firstArgument, secondArgument);
-            }
-            case SUB_CMD: {
-                return sub(firstArgument, secondArgument);
-            }
-            case MUL_CMD: {
-                return mul(firstArgument, secondArgument);
-            }
-            case DIV_CMD: {
-                if (secondArgument == 0)
-                    return WRONG_ARGUMENTS_ERROR_MSG;
-                else
-                    return div(firstArgument, secondArgument);
-            }
-
-            default:
-                return UNKNOWN_OPERATION_ERROR_MSG;
+        } else {
+            return WRONG_ARGUMENTS_ERROR_MSG;
         }
     }
+
+}
 
     /**
      * Computes the sum of two numbers (x + y)
