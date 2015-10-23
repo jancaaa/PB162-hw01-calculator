@@ -3,13 +3,10 @@ package cz.muni.fi.pb162.calculator.impl;
 import cz.muni.fi.pb162.calculator.Result;
 
 /**
- *
  * @author: Jana Zahradnickova,  UCO 433598
  * @version: 23. 10. 2015
- *
  */
-public class CalculationResult implements Result
-{
+public class CalculationResult implements Result {
     double numericValue;
     private boolean numericValueSet = false;
     String alphanumericValue;

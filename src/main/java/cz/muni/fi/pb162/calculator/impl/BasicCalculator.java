@@ -4,11 +4,15 @@ import cz.muni.fi.pb162.calculator.Calculator;
 import cz.muni.fi.pb162.calculator.Result;
 
 /**
- *
  * @author: Jana Zahradnickova,  UCO 433598
  * @version: 23. 10. 2015
- *
  */
+
+/*
+TODO: Konverze návratových typù double, String -> Result
+TODO: Ošetøit, že byly zadány oba argumenty
+*/
+
 public class BasicCalculator implements Calculator {
 
     /**
@@ -19,14 +23,43 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result eval(String input) {
-        //rozparsovat input
-        //zjistit korektnost operace
-        //provedst operaci
-
-        char operator;
+        String operator;
         double firstArgument;
         double secondArgument;
-        return null;
+
+        String[] tokens = input.split(" ");
+        operator = tokens[0];
+        firstArgument = Double.parseDouble(tokens[1]);
+        if (!operator.equals(FAC_CMD))
+            secondArgument = Double.parseDouble(tokens[2]); //pouze pokud argument existuje (resp. operace ho pozaduje
+
+        switch (operator) {
+            case FAC_CMD: {
+                if (((firstArgument == Math.floor(firstArgument)) && !Double.isInfinite(firstArgument)) && (firstArgument >= 0))
+                    return fac((int) firstArgument);
+                else
+                    return WRONG_ARGUMENTS_ERROR_MSG;
+
+            }
+            case SUM_CMD: {
+                return sum(firstArgument, secondArgument);
+            }
+            case SUB_CMD: {
+                return sub(firstArgument, secondArgument);
+            }
+            case MUL_CMD: {
+                return mul(firstArgument, secondArgument);
+            }
+            case DIV_CMD: {
+                if (secondArgument == 0)
+                    return WRONG_ARGUMENTS_ERROR_MSG;
+                else
+                    return div(firstArgument, secondArgument);
+            }
+
+            default:
+                return UNKNOWN_OPERATION_ERROR_MSG;
+        }
     }
 
     /**
@@ -75,9 +108,10 @@ public class BasicCalculator implements Calculator {
     @Override
     public Result div(double x, double y) {
         //pozor na deleni nulou
-        if (y==0)
+        if (y == 0)
             return COMPUTATION_ERROR_MSG;
-        return x / y;
+        else
+            return x / y;
     }
 
     /**
@@ -89,9 +123,8 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result fac(int x) {
-        //pozor na zaporna cisla
-        if (x<0)
-            return COMPUTATION_ERROR_MSG;
+        if (x < 0)
+            return COMPUTATION_ERROR_MSG; //faktorial zapornych cisel nelze spocitat
         if (x == 0)
             return 1;
         else
