@@ -8,12 +8,6 @@ import cz.muni.fi.pb162.calculator.Result;
  * @version: 23. 10. 2015
  */
 
-/*
-TODO: Konverze návratových typù double, String -> Result
-DONE: Ošetøit, že byly zadány oba argumenty
-DONE: Co dìlat, když faktoriál dostane dva argumenty (druhý ignorovat nebo hlásit chybu) => hlásí chybu
-*/
-
 public class BasicCalculator implements Calculator {
 
     /**
@@ -29,18 +23,25 @@ public class BasicCalculator implements Calculator {
         double firstArgument;
         double secondArgument;
 
-        if (tokens.length > 1)
-            firstArgument = Double.parseDouble(tokens[1]);
-        if (tokens.length > 2)
-            secondArgument = Double.parseDouble(tokens[2]);
-
         if (operator.equals(FAC_CMD)) {
-            if ((tokens.length == 2) && (firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument)) && (firstArgument >= 0))
-                return fac((int) firstArgument); //zadany argument je cislo typu int a je nezáporné
-            else
-                return WRONG_ARGUMENTS_ERROR_MSG;
+            if (tokens.length == 2) {
+                firstArgument = Double.parseDouble(tokens[1]);
+            } else {
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+            }
+            if ((firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument))) {
+                return fac((int) firstArgument);
+            } else {
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+            }
+        }
+        if (!(operator.equals(SUM_CMD) || operator.equals(SUB_CMD) || operator.equals(MUL_CMD) || operator.equals(DIV_CMD))){
+            return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
+        }
 
-        } else if (tokens.length == 3) {
+        if (tokens.length == 3) {
+            firstArgument = Double.parseDouble(tokens[1]);
+            secondArgument = Double.parseDouble(tokens[2]);
             switch (operator) {
                 case SUM_CMD: {
                     return sum(firstArgument, secondArgument);
@@ -53,19 +54,17 @@ public class BasicCalculator implements Calculator {
                 }
                 case DIV_CMD: {
                     if (secondArgument == 0)
-                        return WRONG_ARGUMENTS_ERROR_MSG;
+                        return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
                     else
                         return div(firstArgument, secondArgument);
                 }
                 default:
-                    return UNKNOWN_OPERATION_ERROR_MSG;
+                    return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
             }
         } else {
-            return WRONG_ARGUMENTS_ERROR_MSG;
+            return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
         }
     }
-
-}
 
     /**
      * Computes the sum of two numbers (x + y)
@@ -76,7 +75,7 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result sum(double x, double y) {
-        return x + y;
+        return new CalculationResult(x + y, true);
     }
 
     /**
@@ -88,7 +87,7 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result sub(double x, double y) {
-        return x - y;
+        return new CalculationResult(x - y, true);
     }
 
     /**
@@ -100,7 +99,7 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result mul(double x, double y) {
-        return x * y;
+        return new CalculationResult(x * y, true);
     }
 
     /**
@@ -114,9 +113,9 @@ public class BasicCalculator implements Calculator {
     public Result div(double x, double y) {
         //pozor na deleni nulou
         if (y == 0)
-            return COMPUTATION_ERROR_MSG;
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false);
         else
-            return x / y;
+            return new CalculationResult(x / y, true);
     }
 
     /**
@@ -129,10 +128,17 @@ public class BasicCalculator implements Calculator {
     @Override
     public Result fac(int x) {
         if (x < 0)
-            return COMPUTATION_ERROR_MSG; //faktorial zapornych cisel nelze spocitat
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false); //faktorial zapornych cisel nelze spocitat
+        if (x == 0)
+            return new CalculationResult(1.0, true);
+        else
+            return new CalculationResult((double) (facRecursive(x)), true);
+    }
+
+    private int facRecursive(int x) {
         if (x == 0)
             return 1;
         else
-            return x * fac(x - 1);
+            return x * facRecursive(x - 1);
     }
 }

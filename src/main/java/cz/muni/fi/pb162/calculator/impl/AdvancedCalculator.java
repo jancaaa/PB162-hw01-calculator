@@ -15,9 +15,11 @@ TODO: Task "Evaluate operations from textual input"
 TODO: Zkontrolovat napojení metod z NumeralCoventer
 TODO: Má být class abstract?
 TODO: Rozšíøit eval z Basic o pøevody z/do
+TODO: Pøedìlat parsování toDec a fromDec mají jiné typy parametrù
+TODO: Kontrola zda jsou argumenty pro toDec a fromDec int (jsou celoèíselné, ne desetinné)
 */
 
-public abstract class AdvancedCalculator extends BasicCalculator implements ConvertingCalculator {
+public class AdvancedCalculator extends BasicCalculator implements ConvertingCalculator {
     /**
      * Evaluate textual input and perform computation
      *
@@ -28,27 +30,27 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
     public Result eval(String input) {
         String[] tokens = input.split(" ");
         String operator = tokens[0];
-        double firstArgument;
-        double secondArgument;
 
         if (operator.equals(TO_DEC_CMD) || operator.equals(FROM_DEC_CMD)) {
             if (tokens.length < 3)
-                return WRONG_ARGUMENTS_ERROR_MSG;
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG,false);
 
-            firstArgument = Double.parseDouble(tokens[1]);
-            secondArgument = Double.parseDouble(tokens[2]);
-            if (firstArgument < 2 || firstArgument > 16)
-                return COMPUTATION_ERROR_MSG;
+            int firstArgument = Integer.parseInt(tokens[1]);
+            if (firstArgument < 2 || firstArgument > 16 )
+                return new CalculationResult(COMPUTATION_ERROR_MSG,false);
 
             if (operator.equals(TO_DEC_CMD)){
+                String secondArgument = tokens[2];
                 return toDec(firstArgument,secondArgument);
             }
             if (operator.equals(FROM_DEC_CMD)){
+                int secondArgument = Integer.parseInt(tokens[2]);
                 return fromDec(firstArgument,secondArgument);
             }
         } else {
             //volat eval z BasicCalculator
         }
+        return null;
     }
 
     /**
@@ -62,7 +64,7 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
     public Result toDec(int base, String number) {
         int result = 0; //vysledek
         int position = 0; //kolikate misto odzadu pocitame (pro mocninu)
-        int digit = -1;
+        int digit;
         for (int i = number.length() - 1; i >= 0; i--) { //cislo se zpracovava odzadu
             if (base <= 10) {
                 digit = Character.getNumericValue(number.charAt(i));
@@ -72,7 +74,7 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
             result += digit * Math.pow(base, position); //prevod cislice na odpovidajici pozici
             position++;// posun pozice
         }
-        return result;
+        return new CalculationResult(result,true);
     }
 
     /**
@@ -90,16 +92,17 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
             number = number / base; //posun o pozici dal
             result = convertToChar(remainder) + result; //zretezit
         }
-        return result;
+        return new CalculationResult(result,true);
     }
 
     /**
      * Pøevádí èíslo na znak
      *
-     * @param number
+     * @param number zadané èíslo
      * @return zadané èíslo jako znak
      */
     private static char convertToChar(int number) {
+        char output;
         switch (number) {
             case 0: {
                 return '0';
@@ -150,15 +153,16 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
                 return 'F';
             }
         }
+        return 'X';
     }
 
     /**
      * Pøevádí znak na èíslo
      *
-     * @param character
+     * @param character zadaný znak
      * @return èíselná hodnota znaku
      */
-    private static char convertToInt(int character) {
+    private static int convertToInt(char character) {
         switch (character) {
             case '0': {
                 return 0;
@@ -214,5 +218,7 @@ public abstract class AdvancedCalculator extends BasicCalculator implements Conv
 
             }
         }
+        return -1;
     }
+
 }

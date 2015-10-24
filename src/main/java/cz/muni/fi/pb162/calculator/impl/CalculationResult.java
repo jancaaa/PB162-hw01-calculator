@@ -12,13 +12,15 @@ public class CalculationResult implements Result {
     String alphanumericValue;
     boolean isSuccessful;
 
-    public CalculationResult(double numericValue) {
+    public CalculationResult(double numericValue, boolean isSuccessful) {
         this.numericValue = numericValue;
         this.numericValueSet = true;
+        this.isSuccessful = isSuccessful;
     }
 
-    public CalculationResult(String alphanumericValue) {
+    public CalculationResult(String alphanumericValue, boolean isSuccessful) {
         this.alphanumericValue = alphanumericValue;
+        this.isSuccessful = isSuccessful;
     }
 
     /**
