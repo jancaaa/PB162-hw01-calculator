@@ -23,6 +23,9 @@ public class BasicCalculator implements Calculator {
         double firstArgument;
         double secondArgument;
 
+        if (!isValidOperation(operator))
+                return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
+
         if (operator.equals(FAC_CMD)) {
             if (tokens.length == 2) {
                 firstArgument = Double.parseDouble(tokens[1]);
@@ -34,9 +37,6 @@ public class BasicCalculator implements Calculator {
             } else {
                 return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
             }
-        }
-        if (!(operator.equals(SUM_CMD) || operator.equals(SUB_CMD) || operator.equals(MUL_CMD) || operator.equals(DIV_CMD))){
-            return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
         }
 
         if (tokens.length == 3) {
@@ -140,5 +140,18 @@ public class BasicCalculator implements Calculator {
             return 1;
         else
             return x * facRecursive(x - 1);
+    }
+
+    /**
+     *  Vrací zda je zdaná operace korektní (pro kalkulaèku známá)
+     * @param operator operace
+     * @return true - operace je korektní, false - operace není korektní
+     */
+    private boolean isValidOperation (String operator){
+        return (operator.equals(SUM_CMD) ||
+                operator.equals(SUB_CMD) ||
+                operator.equals(MUL_CMD) ||
+                operator.equals(DIV_CMD) ||
+                operator.equals(FAC_CMD));
     }
 }

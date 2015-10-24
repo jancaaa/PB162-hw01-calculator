@@ -8,14 +8,14 @@ import cz.muni.fi.pb162.calculator.Result;
  */
 
 /*
-TODO: Konverze návratových typù double, String -> Result
+DONE: Konverze návratových typù double, String -> Result
 TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4) - OK?
 TODO: Úprava popisu private metod
 TODO: Task "Evaluate operations from textual input"
 TODO: Zkontrolovat napojení metod z NumeralCoventer
 TODO: Má být class abstract?
 TODO: Rozšíøit eval z Basic o pøevody z/do
-TODO: Pøedìlat parsování toDec a fromDec mají jiné typy parametrù
+DONE: Pøedìlat parsování toDec a fromDec mají jiné typy parametrù
 TODO: Kontrola zda jsou argumenty pro toDec a fromDec int (jsou celoèíselné, ne desetinné)
 */
 
@@ -31,24 +31,73 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
         String[] tokens = input.split(" ");
         String operator = tokens[0];
 
+        if (!isValidOperation(operator))
+            return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
+
         if (operator.equals(TO_DEC_CMD) || operator.equals(FROM_DEC_CMD)) {
-            if (tokens.length < 3)
-                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG,false);
+            if (tokens.length != 3)
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+            if (!isValidOperation(tokens[1]))
+                return new CalculationResult(COMPUTATION_ERROR_MSG, false);
 
             int firstArgument = Integer.parseInt(tokens[1]);
-            if (firstArgument < 2 || firstArgument > 16 )
-                return new CalculationResult(COMPUTATION_ERROR_MSG,false);
+            if (firstArgument < 2 || firstArgument > 16)
+                return new CalculationResult(COMPUTATION_ERROR_MSG, false);
 
-            if (operator.equals(TO_DEC_CMD)){
+            if (operator.equals(TO_DEC_CMD)) {
                 String secondArgument = tokens[2];
-                return toDec(firstArgument,secondArgument);
+                return toDec(firstArgument, secondArgument);
             }
-            if (operator.equals(FROM_DEC_CMD)){
+            if (operator.equals(FROM_DEC_CMD)) {
+                if (!isStringInt(tokens[2]))
+                    return new CalculationResult(COMPUTATION_ERROR_MSG, false);
                 int secondArgument = Integer.parseInt(tokens[2]);
-                return fromDec(firstArgument,secondArgument);
+                return fromDec(firstArgument, secondArgument);
             }
         } else {
             //volat eval z BasicCalculator
+            double firstArgument;
+            double secondArgument;
+
+            if (operator.equals(FAC_CMD)) {
+                if (tokens.length == 2) {
+                    firstArgument = Double.parseDouble(tokens[1]);
+                } else {
+                    return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+                }
+                if ((firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument))) {
+                    return fac((int) firstArgument);
+                } else {
+                    return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+                }
+            }
+
+            if (tokens.length == 3) {
+                firstArgument = Double.parseDouble(tokens[1]);
+                secondArgument = Double.parseDouble(tokens[2]);
+                switch (operator) {
+                    case SUM_CMD: {
+                        return sum(firstArgument, secondArgument);
+                    }
+                    case SUB_CMD: {
+                        return sub(firstArgument, secondArgument);
+                    }
+                    case MUL_CMD: {
+                        return mul(firstArgument, secondArgument);
+                    }
+                    case DIV_CMD: {
+                        if (secondArgument == 0)
+                            return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+                        else
+                            return div(firstArgument, secondArgument);
+                    }
+                    default:
+                        return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
+                }
+            } else {
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
+            }
+
         }
         return null;
     }
@@ -74,7 +123,7 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
             result += digit * Math.pow(base, position); //prevod cislice na odpovidajici pozici
             position++;// posun pozice
         }
-        return new CalculationResult(result,true);
+        return new CalculationResult(result, true);
     }
 
     /**
@@ -92,7 +141,7 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
             number = number / base; //posun o pozici dal
             result = convertToChar(remainder) + result; //zretezit
         }
-        return new CalculationResult(result,true);
+        return new CalculationResult(result, true);
     }
 
     /**
@@ -199,26 +248,44 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
             }
             case 'B': {
                 return 11;
-
             }
             case 'C': {
                 return 12;
-
             }
             case 'D': {
                 return 13;
-
             }
             case 'E': {
                 return 14;
-
             }
             case 'F': {
                 return 15;
-
             }
         }
         return -1;
     }
 
+    /**
+     * Vrací zda je zdaná operace korektní (pro kalkulaèku známá)
+     *
+     * @param operator operace
+     * @return true - operace je korektní, false - operace není korektní
+     */
+    private boolean isValidOperation(String operator) {
+        return (operator.equals(SUM_CMD) ||
+                operator.equals(SUB_CMD) ||
+                operator.equals(MUL_CMD) ||
+                operator.equals(DIV_CMD) ||
+                operator.equals(FAC_CMD) ||
+                operator.equals(TO_DEC_CMD) ||
+                operator.equals(FROM_DEC_CMD));
+    }
+
+    private boolean isStringInt (String input){
+        for(int i = 0; i < input.length(); i++) {
+            if (input.charAt(i)== '.')
+                return false;
+        }
+        return true;
+    }
 }
