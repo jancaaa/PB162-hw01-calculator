@@ -24,7 +24,7 @@ public class BasicCalculator implements Calculator {
         double secondArgument;
 
         if (!isValidOperation(operator))
-                return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
+            return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
 
         if (operator.equals(FAC_CMD)) {
             if (tokens.length == 2) {
@@ -143,11 +143,12 @@ public class BasicCalculator implements Calculator {
     }
 
     /**
-     *  Vrací zda je zdaná operace korektní (pro kalkulaèku známá)
-     * @param operator operace
-     * @return true - operace je korektní, false - operace není korektní
+     * Return if entered operation is valid (known by calculator)
+     *
+     * @param operator operation command/symbol
+     * @return true - operation is valid (known), false - operation is not valid (not known)
      */
-    private boolean isValidOperation (String operator){
+    private boolean isValidOperation(String operator) {
         return (operator.equals(SUM_CMD) ||
                 operator.equals(SUB_CMD) ||
                 operator.equals(MUL_CMD) ||

@@ -8,15 +8,8 @@ import cz.muni.fi.pb162.calculator.Result;
  */
 
 /*
-DONE: Konverze návratových typù double, String -> Result
-TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4) - OK?
-TODO: Úprava popisu private metod
-TODO: Task "Evaluate operations from textual input"
+TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4) - neopakovat kod z BasicCalculator
 TODO: Zkontrolovat napojení metod z NumeralCoventer
-TODO: Má být class abstract?
-TODO: Rozšíøit eval z Basic o pøevody z/do
-DONE: Pøedìlat parsování toDec a fromDec mají jiné typy parametrù
-TODO: Kontrola zda jsou argumenty pro toDec a fromDec int (jsou celoèíselné, ne desetinné)
 */
 
 public class AdvancedCalculator extends BasicCalculator implements ConvertingCalculator {
@@ -37,25 +30,26 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
         if (operator.equals(TO_DEC_CMD) || operator.equals(FROM_DEC_CMD)) {
             if (tokens.length != 3)
                 return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-            if (!isValidOperation(tokens[1]))
-                return new CalculationResult(COMPUTATION_ERROR_MSG, false);
+            if (!isStringInt(tokens[1]))
+                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
 
             int firstArgument = Integer.parseInt(tokens[1]);
-            if (firstArgument < 2 || firstArgument > 16)
-                return new CalculationResult(COMPUTATION_ERROR_MSG, false);
 
             if (operator.equals(TO_DEC_CMD)) {
                 String secondArgument = tokens[2];
                 return toDec(firstArgument, secondArgument);
             }
             if (operator.equals(FROM_DEC_CMD)) {
+
                 if (!isStringInt(tokens[2]))
                     return new CalculationResult(COMPUTATION_ERROR_MSG, false);
+
                 int secondArgument = Integer.parseInt(tokens[2]);
                 return fromDec(firstArgument, secondArgument);
             }
         } else {
             //volat eval z BasicCalculator
+
             double firstArgument;
             double secondArgument;
 
@@ -99,6 +93,7 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
             }
 
         }
+
         return null;
     }
 
@@ -111,17 +106,22 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
      */
     @Override
     public Result toDec(int base, String number) {
-        int result = 0; //vysledek
-        int position = 0; //kolikate misto odzadu pocitame (pro mocninu)
+        if (base < 2 || base > 16)
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false);
+        if (!isStingValidNumber (base, number))
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false);
+
+        int result = 0;
+        int position = 0; //power base (char order from the end)
         int digit;
-        for (int i = number.length() - 1; i >= 0; i--) { //cislo se zpracovava odzadu
+        for (int i = number.length() - 1; i >= 0; i--) { //processing from the end
             if (base <= 10) {
                 digit = Character.getNumericValue(number.charAt(i));
             } else {
                 digit = convertToInt(number.charAt(i));
             }
-            result += digit * Math.pow(base, position); //prevod cislice na odpovidajici pozici
-            position++;// posun pozice
+            result += digit * Math.pow(base, position); //conversion to right position
+            position++;
         }
         return new CalculationResult(result, true);
     }
@@ -135,20 +135,116 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
      */
     @Override
     public Result fromDec(int base, int number) {
+        if (base < 2 || base > 16)
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false);
         String result = "";
         while (number != 0) {
-            int remainder = number % base; //zjisteni zbytku (hodnoty na odpovidajici pozici)
-            number = number / base; //posun o pozici dal
-            result = convertToChar(remainder) + result; //zretezit
+            int remainder = number % base;
+            number = number / base;
+            result = convertToChar(remainder) + result; //concatenation
         }
         return new CalculationResult(result, true);
     }
+    /**
+     * Return if entered operation is valid (known by calculator)
+     *
+     * @param operator operation command/symbol
+     * @return true - operation is valid (known), false - operation is not valid (not known)
+     */
+    private boolean isValidOperation(String operator) {
+        return operator.equals(SUM_CMD) ||
+                operator.equals(SUB_CMD) ||
+                operator.equals(MUL_CMD) ||
+                operator.equals(DIV_CMD) ||
+                operator.equals(FAC_CMD) ||
+                operator.equals(TO_DEC_CMD) ||
+                operator.equals(FROM_DEC_CMD);
+    }
 
     /**
-     * Pøevádí èíslo na znak
+     * Return if entered string is integer
      *
-     * @param number zadané èíslo
-     * @return zadané èíslo jako znak
+     * @param input entered string
+     * @return true - entered string is integer, false - entered string is not integer
+     */
+    private boolean isStringInt(String input) {
+        for (int i = 0; i < input.length(); i++) {
+            if (!Character.isDigit(input.charAt(i)))
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Return if entered string is valid number (contains only allowed characters)
+     *
+     * @param base base of numeral system
+     * @param number number in entered base system
+     * @return true - is valid, false - is not valid
+     */
+    private boolean isStingValidNumber (int base, String number){
+        if (base <=10){
+            for (int i = 0; i < number.length(); i++) {
+                if (!Character.isDigit(number.charAt(i)))
+                    return false;
+                else if (Character.getNumericValue(number.charAt(i))>=base){
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            int charValue;
+            int offset;
+            for (int i = 0; i < number.length(); i++) {
+                if (!Character.isDigit(number.charAt(i))) {
+                    charValue = Character.getNumericValue(number.charAt(i));
+                    offset = charValue - Character.getNumericValue('A');
+                    if (offset >= base - 10){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Convert char to numeric value
+     *
+     * @param character character to convert
+     * @return numeric value of character
+     */
+    private static int convertToInt(char character) {
+        switch (character) {
+
+            case 'A': {
+                return 10;
+            }
+            case 'B': {
+                return 11;
+            }
+            case 'C': {
+                return 12;
+            }
+            case 'D': {
+                return 13;
+            }
+            case 'E': {
+                return 14;
+            }
+            case 'F': {
+                return 15;
+            }
+            default: return Character.getNumericValue(character);
+        }
+    }
+
+    /**
+     * Convert digit to char
+     *
+     * @param number digit to convert
+     * @return entered number as char
      */
     private static char convertToChar(int number) {
         char output;
@@ -202,90 +298,6 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
                 return 'F';
             }
         }
-        return 'X';
-    }
-
-    /**
-     * Pøevádí znak na èíslo
-     *
-     * @param character zadaný znak
-     * @return èíselná hodnota znaku
-     */
-    private static int convertToInt(char character) {
-        switch (character) {
-            case '0': {
-                return 0;
-            }
-            case '1': {
-                return 1;
-            }
-            case '2': {
-                return 2;
-            }
-            case '3': {
-                return 3;
-            }
-            case '4': {
-                return 4;
-            }
-            case '5': {
-                return 5;
-            }
-            case '6': {
-                return 6;
-            }
-            case '7': {
-                return 7;
-            }
-            case '8': {
-                return 8;
-            }
-            case '9': {
-                return 9;
-            }
-            case 'A': {
-                return 10;
-            }
-            case 'B': {
-                return 11;
-            }
-            case 'C': {
-                return 12;
-            }
-            case 'D': {
-                return 13;
-            }
-            case 'E': {
-                return 14;
-            }
-            case 'F': {
-                return 15;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Vrací zda je zdaná operace korektní (pro kalkulaèku známá)
-     *
-     * @param operator operace
-     * @return true - operace je korektní, false - operace není korektní
-     */
-    private boolean isValidOperation(String operator) {
-        return (operator.equals(SUM_CMD) ||
-                operator.equals(SUB_CMD) ||
-                operator.equals(MUL_CMD) ||
-                operator.equals(DIV_CMD) ||
-                operator.equals(FAC_CMD) ||
-                operator.equals(TO_DEC_CMD) ||
-                operator.equals(FROM_DEC_CMD));
-    }
-
-    private boolean isStringInt (String input){
-        for(int i = 0; i < input.length(); i++) {
-            if (input.charAt(i)== '.')
-                return false;
-        }
-        return true;
+        return 'X'; //error
     }
 }

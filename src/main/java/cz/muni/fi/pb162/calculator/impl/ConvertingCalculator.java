@@ -9,8 +9,6 @@ import cz.muni.fi.pb162.calculator.NumeralConverter;
  * @version: 23. 10. 2015
  *
  */
-
-// TODO: Napojeni na NumeralConventer (je vpoøádku?)
 public interface ConvertingCalculator extends Calculator, NumeralConverter  {
 
 }
