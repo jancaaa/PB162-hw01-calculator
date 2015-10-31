@@ -6,12 +6,6 @@ import cz.muni.fi.pb162.calculator.Result;
  * @author: Jana Zahradnickova,  UCO 433598
  * @version: 23. 10. 2015
  */
-
-/*
-TODO: Udìlat z toho rozšíøenou verzi BasicCalculatror (Step 4) - neopakovat kod z BasicCalculator
-TODO: Zkontrolovat napojení metod z NumeralCoventer
-*/
-
 public class AdvancedCalculator extends BasicCalculator implements ConvertingCalculator {
     /**
      * Evaluate textual input and perform computation
@@ -47,54 +41,8 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
                 int secondArgument = Integer.parseInt(tokens[2]);
                 return fromDec(firstArgument, secondArgument);
             }
-        } else {
-            //volat eval z BasicCalculator
-
-            double firstArgument;
-            double secondArgument;
-
-            if (operator.equals(FAC_CMD)) {
-                if (tokens.length == 2) {
-                    firstArgument = Double.parseDouble(tokens[1]);
-                } else {
-                    return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-                }
-                if ((firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument))) {
-                    return fac((int) firstArgument);
-                } else {
-                    return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-                }
-            }
-
-            if (tokens.length == 3) {
-                firstArgument = Double.parseDouble(tokens[1]);
-                secondArgument = Double.parseDouble(tokens[2]);
-                switch (operator) {
-                    case SUM_CMD: {
-                        return sum(firstArgument, secondArgument);
-                    }
-                    case SUB_CMD: {
-                        return sub(firstArgument, secondArgument);
-                    }
-                    case MUL_CMD: {
-                        return mul(firstArgument, secondArgument);
-                    }
-                    case DIV_CMD: {
-                        if (secondArgument == 0)
-                            return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-                        else
-                            return div(firstArgument, secondArgument);
-                    }
-                    default:
-                        return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
-                }
-            } else {
-                return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-            }
-
         }
-
-        return null;
+        return super.eval(input); //calls eval from BasicCalculator
     }
 
     /**

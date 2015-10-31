@@ -7,10 +7,10 @@ import cz.muni.fi.pb162.calculator.Result;
  * @version: 23. 10. 2015
  */
 public class CalculationResult implements Result {
-    double numericValue;
+    private double numericValue;
     private boolean numericValueSet = false;
-    String alphanumericValue;
-    boolean isSuccessful;
+    private String alphanumericValue;
+    private boolean isSuccessful;
 
     public CalculationResult(double numericValue, boolean isSuccessful) {
         this.numericValue = numericValue;
