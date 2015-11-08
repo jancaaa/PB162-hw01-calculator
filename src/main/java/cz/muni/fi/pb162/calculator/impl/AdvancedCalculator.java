@@ -56,18 +56,18 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
     public Result toDec(int base, String number) {
         if (base < 2 || base > 16)
             return new CalculationResult(COMPUTATION_ERROR_MSG, false);
-        if (!isStingValidNumber (base, number))
+        if (!isStingValidNumber(base, number))
             return new CalculationResult(COMPUTATION_ERROR_MSG, false);
 
         int result = 0;
         int position = 0; //power base (char order from the end)
         int digit;
         for (int i = number.length() - 1; i >= 0; i--) { //processing from the end
-            if (base <= 10) {
+            if (base <= 10)
                 digit = Character.getNumericValue(number.charAt(i));
-            } else {
+            else
                 digit = convertToInt(number.charAt(i));
-            }
+
             result += digit * Math.pow(base, position); //conversion to right position
             position++;
         }
@@ -93,6 +93,7 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
         }
         return new CalculationResult(result, true);
     }
+
     /**
      * Return if entered operation is valid (known by calculator)
      *
@@ -126,31 +127,28 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
     /**
      * Return if entered string is valid number (contains only allowed characters)
      *
-     * @param base base of numeral system
+     * @param base   base of numeral system
      * @param number number in entered base system
      * @return true - is valid, false - is not valid
      */
-    private boolean isStingValidNumber (int base, String number){
-        if (base <=10){
+    private boolean isStingValidNumber(int base, String number) {
+        if (base <= 10) {
             for (int i = 0; i < number.length(); i++) {
                 if (!Character.isDigit(number.charAt(i)))
                     return false;
-                else if (Character.getNumericValue(number.charAt(i))>=base){
+                else if (Character.getNumericValue(number.charAt(i)) >= base) {
                     return false;
                 }
             }
-        }
-        else
-        {
+        } else {
             int charValue;
             int offset;
             for (int i = 0; i < number.length(); i++) {
                 if (!Character.isDigit(number.charAt(i))) {
                     charValue = Character.getNumericValue(number.charAt(i));
                     offset = charValue - Character.getNumericValue('A');
-                    if (offset >= base - 10){
+                    if (offset >= base - 10)
                         return false;
-                    }
                 }
             }
         }
@@ -165,7 +163,6 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
      */
     private static int convertToInt(char character) {
         switch (character) {
-
             case 'A': {
                 return 10;
             }
@@ -181,10 +178,11 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
             case 'E': {
                 return 14;
             }
-            case 'F': {
+            case 'F':
                 return 15;
-            }
-            default: return Character.getNumericValue(character);
+
+            default:
+                return Character.getNumericValue(character);
         }
     }
 
@@ -195,7 +193,6 @@ public class AdvancedCalculator extends BasicCalculator implements ConvertingCal
      * @return entered number as char
      */
     private static char convertToChar(int number) {
-        char output;
         switch (number) {
             case 0: {
                 return '0';

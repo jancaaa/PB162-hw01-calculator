@@ -40,7 +40,7 @@ public class CalculationResult implements Result {
      */
     @Override
     public boolean isAlphanumeric() {
-        return (alphanumericValue != null);
+        return alphanumericValue != null;
     }
 
     /**
@@ -50,7 +50,7 @@ public class CalculationResult implements Result {
      */
     @Override
     public boolean isNumeric() {
-        return (numericValueSet);
+        return numericValueSet;
     }
 
     /**

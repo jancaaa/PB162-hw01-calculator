@@ -27,16 +27,15 @@ public class BasicCalculator implements Calculator {
             return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
 
         if (operator.equals(FAC_CMD)) {
-            if (tokens.length == 2) {
+            if (tokens.length == 2)
                 firstArgument = Double.parseDouble(tokens[1]);
-            } else {
+            else
                 return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-            }
-            if ((firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument))) {
+
+            if ((firstArgument == Math.floor(firstArgument)) && (!Double.isInfinite(firstArgument)))
                 return fac((int) firstArgument);
-            } else {
+            else
                 return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-            }
         }
 
         if (tokens.length == 3) {
@@ -53,17 +52,13 @@ public class BasicCalculator implements Calculator {
                     return mul(firstArgument, secondArgument);
                 }
                 case DIV_CMD: {
-                    if (secondArgument == 0)
-                        return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-                    else
-                        return div(firstArgument, secondArgument);
+                    return div(firstArgument, secondArgument);
                 }
                 default:
                     return new CalculationResult(UNKNOWN_OPERATION_ERROR_MSG, false);
             }
-        } else {
+        } else
             return new CalculationResult(WRONG_ARGUMENTS_ERROR_MSG, false);
-        }
     }
 
     /**
@@ -111,7 +106,6 @@ public class BasicCalculator implements Calculator {
      */
     @Override
     public Result div(double x, double y) {
-        //pozor na deleni nulou
         if (y == 0)
             return new CalculationResult(COMPUTATION_ERROR_MSG, false);
         else
@@ -128,13 +122,17 @@ public class BasicCalculator implements Calculator {
     @Override
     public Result fac(int x) {
         if (x < 0)
-            return new CalculationResult(COMPUTATION_ERROR_MSG, false); //faktorial zapornych cisel nelze spocitat
-        if (x == 0)
-            return new CalculationResult(1.0, true);
+            return new CalculationResult(COMPUTATION_ERROR_MSG, false);
         else
             return new CalculationResult((double) (facRecursive(x)), true);
     }
 
+    /**
+     * Computes the factorial of given natural number
+     *
+     * @param x input number
+     * @return result
+     */
     private int facRecursive(int x) {
         if (x == 0)
             return 1;
